@@ -1,14 +1,22 @@
 package nikhil.spaceapps;
 
+import android.graphics.Camera;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,16 +28,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+
+    ArrayList<LatLng> latLngArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
+        latLngArrayList = new ArrayList<LatLng>();
+
+
+
+//        mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)));
+
     }
 
     @Override
@@ -40,6 +58,7 @@ public class MapsActivity extends FragmentActivity {
         // Fetch the Meteorite Data
         FetchMeteoriteDataTask meteoriteDataTask = new FetchMeteoriteDataTask();
         meteoriteDataTask.execute();
+
 
     }
 
@@ -85,7 +104,14 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-//        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        Circle circle = mMap.addCircle(new CircleOptions()
+                .center(new LatLng(-33.87365, 151.20689))
+                .radius(10000)
+                .strokeColor(Color.RED)
+                .fillColor(Color.BLUE));
+
+
+//        mMap.addMarker(new MarkerOptions().position(new LatLng(10, 10)).title("Hello"));
     }
 
 
@@ -102,6 +128,10 @@ public class MapsActivity extends FragmentActivity {
     public class FetchMeteoriteDataTask extends AsyncTask<Void, Void, Void> {
 
         private String rawJsonOutput;
+
+        /*
+        Asychronously connect to the api
+         */
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -178,7 +208,9 @@ public class MapsActivity extends FragmentActivity {
         } // end of doInBackground
 
 
-
+        /*
+        * * Parse the JSON to get Latitudes and Longitudes
+        */
         private void parseJSON () throws JSONException {
 
             JSONArray rootJSON = new JSONArray(rawJsonOutput);
@@ -197,14 +229,55 @@ public class MapsActivity extends FragmentActivity {
 
                 Log.d("\n\n\n\nLatitude, Longitude", latitude + ", " + longitude);
 
-            }
+                // add the lats and longs into the arraylist
+                LatLng tempLatLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                latLngArrayList.add(tempLatLng);
+
+            } // end of for loop
 
 
 //            Log.d("\n\n\n\nRoot Array Test", rawJsonOutput);
 
+//            plotOnMap();
 
         } // end of parseJSON
 
+
+        @Override
+        protected void onPostExecute(Void yolo) {
+            plotOnMap();
+//            Toast.makeText(getApplicationContext(), latLngArrayList.size(), Toast.LENGTH_SHORT).show();
+
+        }
+
+        /*
+        Plot the latlngs on the map
+         */
+
+        private void plotOnMap() {
+
+//            Toast.makeText(getApplicationContext(), latLngArrayList.size(), Toast.LENGTH_SHORT).show();
+
+            for (LatLng l : latLngArrayList) {
+
+
+
+                CircleOptions circleOptions = new CircleOptions();
+                circleOptions.center(l);
+                circleOptions.radius(5000);
+                circleOptions.fillColor(0xffffffff);
+
+                mMap.addCircle(circleOptions);
+            }
+
+
+//
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLngArrayList.get(1)));
+//            mMap.animateCamera(CameraUpdateFactory.newLatLng(latLngArrayList.get(1)));
+
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)));/////////testetsetset
+
+        } // end of plotOnMap
 
 
     } // end of fetch meteorite task
