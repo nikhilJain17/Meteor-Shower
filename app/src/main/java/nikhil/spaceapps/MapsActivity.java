@@ -10,6 +10,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,6 +101,8 @@ public class MapsActivity extends FragmentActivity {
 
     public class FetchMeteoriteDataTask extends AsyncTask<Void, Void, Void> {
 
+        private String rawJsonOutput;
+
         @Override
         protected Void doInBackground(Void... params) {
 
@@ -104,7 +110,7 @@ public class MapsActivity extends FragmentActivity {
             BufferedReader reader = null;
 
             // Contains raw JSON output as a string
-            String rawJsonOutput = null;
+            rawJsonOutput = null;
 
             try {
 
@@ -135,7 +141,7 @@ public class MapsActivity extends FragmentActivity {
                 }// end of while
 
                 rawJsonOutput = buffer.toString();
-                Log.d("\nRaw JSON Output: ", rawJsonOutput);
+//                Log.d("\nRaw JSON Output: ", rawJsonOutput);
 
             } // end of try
 
@@ -159,9 +165,45 @@ public class MapsActivity extends FragmentActivity {
 
             }
 
+            try {
+                parseJSON();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
             return null;
 
         } // end of doInBackground
+
+
+
+        private void parseJSON () throws JSONException {
+
+            JSONArray rootJSON = new JSONArray(rawJsonOutput);
+
+            for (int i = 0; i < rootJSON.length(); i++) {
+
+                JSONObject obj = rootJSON.getJSONObject(i);
+
+                JSONObject geolocationObj = obj.getJSONObject("geolocation");
+//
+//                JSONObject JSONLat = geolocationObj.getJSONObject(2);
+//                JSONObject JSONLong = geolocationObj.getJSONObject(3);
+
+                String latitude = geolocationObj.getString("latitude");
+                String longitude = geolocationObj.getString("longitude");
+
+                Log.d("\n\n\n\nLatitude, Longitude", latitude + ", " + longitude);
+
+            }
+
+
+//            Log.d("\n\n\n\nRoot Array Test", rawJsonOutput);
+
+
+        } // end of parseJSON
 
 
 
