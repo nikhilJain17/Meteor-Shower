@@ -1,11 +1,15 @@
 package nikhil.spaceapps;
 
+import android.app.ActionBar;
 import android.graphics.Camera;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -30,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import static nikhil.spaceapps.R.*;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
@@ -39,8 +45,12 @@ public class MapsActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(layout.activity_maps);
         setUpMapIfNeeded();
+
+        ActionBar barrrrrr = getActionBar();
+        barrrrrr.setTitle("Meteor Shower");
+        barrrrrr.setBackgroundDrawable(getDrawable(drawable.meteor_shower_2));
 
         latLngArrayList = new ArrayList<LatLng>();
 
@@ -61,6 +71,26 @@ public class MapsActivity extends FragmentActivity {
 
 
     }
+
+    @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.maps, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == id.danger_report) {
+            Toast.makeText(this, "Gaypegs", Toast.LENGTH_SHORT).show();
+        }
+
+        return false;
+
+    } // end of onOptionsItemsSelected
+
+
 
 
     /********************************************************************************
@@ -88,7 +118,7 @@ public class MapsActivity extends FragmentActivity {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
+            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(id.map))
                     .getMap();
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
