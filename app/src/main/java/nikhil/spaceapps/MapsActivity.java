@@ -1,12 +1,21 @@
 package nikhil.spaceapps;
 
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MapsActivity extends FragmentActivity {
 
@@ -23,7 +32,19 @@ public class MapsActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+
+        // Fetch the Meteorite Data
+        FetchMeteoriteDataTask meteoriteDataTask = new FetchMeteoriteDataTask();
+        meteoriteDataTask.execute();
+
     }
+
+
+    /********************************************************************************
+     *
+     *  Auto-generated Google Maps Stuff
+     *
+      */
 
     /**
      * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
@@ -60,6 +81,98 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+//        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
     }
-}
+
+
+    /***
+     *
+     *  End Auto-generated Google Maps Stuff
+     *
+     ******************************************************************************/
+
+
+
+    // TODO Anonymous class to access the METEORITE STRIKE API
+
+    public class FetchMeteoriteDataTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // Contains raw JSON output as a string
+            String rawJsonOutput = null;
+
+            try {
+
+                final String urlString = "https://data.nasa.gov/resource/gh4g-9sfh.json";
+                URL url = new URL(urlString);
+
+                // create the request and open the connection
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // read the input
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+
+                if (inputStream == null)
+                    return null;
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                // keep on reading
+                while ((line = reader.readLine()) != null) {
+
+                    // format json to have newlines
+                    buffer.append(line + "\n");
+
+                }// end of while
+
+                rawJsonOutput = buffer.toString();
+                Log.d("\nRaw JSON Output: ", rawJsonOutput);
+
+            } // end of try
+
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            finally {
+
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+
+                if (reader != null)
+                    try {
+                        reader.close();
+                    }
+                    catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+            }
+
+            return null;
+
+        } // end of doInBackground
+
+
+
+    } // end of fetch meteorite task
+
+
+
+
+
+
+
+
+
+} // end of class
