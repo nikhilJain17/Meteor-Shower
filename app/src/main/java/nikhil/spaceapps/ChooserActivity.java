@@ -2,16 +2,18 @@ package nikhil.spaceapps;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 
 
 public class ChooserActivity extends Activity {
 
-    Button mapButton;
-    Button cometButton;
+    private Button mapButton;
+    private Button cometButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +21,15 @@ public class ChooserActivity extends Activity {
         setContentView(R.layout.activity_chooser);
 
         mapButton = (Button) findViewById(R.id.map_button);
+
         cometButton = (Button) findViewById(R.id.comet_button);
 
+    }
 
+    public void onMapButtonClicked (View v) {
+
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
 
     }
 
