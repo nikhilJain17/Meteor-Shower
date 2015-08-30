@@ -85,6 +85,10 @@ public class MapsActivity extends FragmentActivity {
         FetchMeteoriteDataTask meteoriteDataTask = new FetchMeteoriteDataTask();
         meteoriteDataTask.execute();
 
+        // fetch the facility data
+        NasaCenterTask nasaCenterTask = new NasaCenterTask();
+        nasaCenterTask.execute();
+
 
     }
 
@@ -211,7 +215,7 @@ public class MapsActivity extends FragmentActivity {
 
 
 
-    // TODO Anonymous class to access the METEORITE STRIKE API
+    // TODO  class to access the METEORITE STRIKE API
 
     public class FetchMeteoriteDataTask extends AsyncTask<Void, Void, Void> {
 
@@ -407,6 +411,81 @@ public class MapsActivity extends FragmentActivity {
     } // end of fetch meteorite task
 
 
+    // TODO class to access the NASA CENTER API
+
+    public class NasaCenterTask extends AsyncTask<Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            // raw output
+            String rawJsonOutput = null;
+
+            try {
+
+                URL url = new URL("https://data.nasa.gov/resource/gvk9-iz74.json");
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // read into inputstreamsteriniegrnawegtawet
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
+
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+
+                    buffer.append(line + "\n");
+                }
+
+                rawJsonOutput = buffer.toString();
+
+            } // end of try
+
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            finally {
+
+                if (urlConnection != null)
+                    urlConnection.disconnect();
+
+                if (reader != null)
+                    try {
+                        reader.close();
+                    }
+                    catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+            }
+
+
+            Log.d("NASA Facilities outputs: ", rawJsonOutput);
+
+            return null;
+
+        }// end of doinbaclkgorund
+
+
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+        } // end of postexecute
+
+
+
+    } // end of nasa class
 
 
 
