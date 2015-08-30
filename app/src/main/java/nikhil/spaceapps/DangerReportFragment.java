@@ -41,14 +41,7 @@ public class DangerReportFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        // get the user's location
-//        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-//        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//
-//        latitude = location.getLatitude();
-//        longitude = location.getLongitude();
 
-//        40.709128,	-74.0104544
 
         // make the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

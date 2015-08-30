@@ -130,6 +130,11 @@ public class MapsActivity extends FragmentActivity {
             fragment.latLngArrayList = latLngArrayList;
             fragment.show(getFragmentManager(), "");
 
+//            // display the location fragment
+//            EnterLocation enterLocation = new EnterLocation();
+//            enterLocation.latLngArrayList = latLngArrayList;
+//            enterLocation.show(getFragmentManager(), "");
+
         }
 
         return false;
