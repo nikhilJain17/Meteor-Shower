@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -415,6 +416,10 @@ public class MapsActivity extends FragmentActivity {
 
     public class NasaCenterTask extends AsyncTask<Void, Void, Void> {
 
+        String rawJsonOutput;
+
+        ArrayList<LatLng> positionsArray = new ArrayList<LatLng>();
+        ArrayList<String> namesArray = new ArrayList<String>();
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -423,7 +428,7 @@ public class MapsActivity extends FragmentActivity {
             BufferedReader reader = null;
 
             // raw output
-            String rawJsonOutput = null;
+            rawJsonOutput = null;
 
             try {
 
@@ -471,15 +476,74 @@ public class MapsActivity extends FragmentActivity {
 
             Log.d("NASA Facilities outputs: ", rawJsonOutput);
 
+            try {
+                parseJSON();
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             return null;
 
         }// end of doinbaclkgorund
 
 
+        // Parse said JSON
+        private void parseJSON() throws JSONException {
+
+            JSONArray rootArray = new JSONArray(rawJsonOutput);
+
+            for (int i = 0; i < rootArray.length(); i++) {
+
+                JSONObject object = rootArray.getJSONObject(i);
+
+                JSONObject location = object.getJSONObject("location");
+
+                String latitude = location.getString("latitude");
+                String longitude = location.getString("longitude");
+                String name = object.getString("center"); // aka name
+
+                double lat = Double.parseDouble(latitude);
+                double longdirk = Double.parseDouble(longitude);
+
+                LatLng temp = new LatLng(lat, longdirk);
+
+//                mMap.addMarker(new MarkerOptions().position(temp).title(name));
+
+                namesArray.add(name);
+                positionsArray.add(temp);
+
+            }
+
+
+
+        } // end of parseJSON
+
 
 
         @Override
         protected void onPostExecute(Void aVoid) {
+
+            // DJ
+            // PLOT THAT BILLA
+
+            for (int i = 0; i < positionsArray.size(); i++) {
+//
+//                CircleOptions circletwerk = new CircleOptions();
+//                circletwerk.center(l);
+//                circletwerk.radius(20000);
+//                circletwerk.fillColor(Color.BLUE);
+
+//                Log.i("TESTEST", l.latitude + " " + l.longitude);
+
+                LatLng l = positionsArray.get(i);
+
+                mMap.addMarker(new MarkerOptions().position(l).title(namesArray.get(i)));
+
+
+            }
+
+//            mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)).title("Sample text"));
 
         } // end of postexecute
 
