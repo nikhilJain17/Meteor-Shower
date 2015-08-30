@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.json.JSONArray;
@@ -195,12 +196,8 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        Circle circle = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(-33.87365, 151.20689))
-                .radius(10000)
-                .strokeColor(Color.RED)
-                .fillColor(Color.BLUE));
 
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
 //        mMap.addMarker(new MarkerOptions().position(new LatLng(10, 10)).title("Hello"));
     }
@@ -351,9 +348,23 @@ public class MapsActivity extends FragmentActivity {
 //            Toast.makeText(this, "Problem reading list of locations.", Toast.LENGTH_LONG).show();
 //        }
 
+            int[] colors = {
+                    Color.rgb(102, 225, 0), // green
+                    Color.rgb(255, 0, 0),    // red
+                    Color.BLUE
+            };
+
+            float[] startPoints = {
+                    0.2f, 1f, 1.2f
+            };
+
             // Create a heat map tile provider, passing it the latlngs of the police stations.
+            Gradient gradient = new Gradient(colors, startPoints);
+
             HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
                     .data(latLngArrayList)
+                    .radius(50)
+                    .gradient(gradient)
                     .build();
 
             // Add a tile overlay to the map, using the heat map tile provider.
