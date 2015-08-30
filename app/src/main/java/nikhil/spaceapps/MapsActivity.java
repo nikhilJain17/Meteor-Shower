@@ -1,9 +1,14 @@
 package nikhil.spaceapps;
 
 import android.app.ActionBar;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Camera;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -50,7 +55,7 @@ public class MapsActivity extends FragmentActivity {
 
         ActionBar barrrrrr = getActionBar();
         barrrrrr.setTitle("Meteor Shower");
-        barrrrrr.setBackgroundDrawable(getDrawable(drawable.meteor_shower_2));
+        barrrrrr.setBackgroundDrawable(getDrawable(drawable.meteor_shower_3));
 
         latLngArrayList = new ArrayList<LatLng>();
 
@@ -83,7 +88,48 @@ public class MapsActivity extends FragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == id.danger_report) {
-            Toast.makeText(this, "Gaypegs", Toast.LENGTH_SHORT).show();
+
+//            LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//            Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+//            double latitude ;
+//            double longitude ;
+//
+//            if (location != null){
+//                latitude = location.getLatitude();
+//                longitude = location.getLongitude();
+//            }
+//
+//            else {
+//                Location getLastLocation = lm.getLastKnownLocation
+//                        (LocationManager.PASSIVE_PROVIDER);
+//                longitude = getLastLocation.getLongitude();
+//                latitude = getLastLocation.getLatitude();
+//            }
+
+//            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+//
+//            Criteria criteria = new Criteria();
+//            String provider = locationManager.getBestProvider(criteria, true);
+
+//            Location myLocation = locationManager.getLastKnownLocation(provider);
+
+            // Get location
+//            mMap.setMyLocationEnabled(true);
+//            Location myLocation = mMap.getMyLocation();
+//
+//            double latitude = myLocation.getLatitude();
+//            double longitude = myLocation.getLongitude();
+
+
+//            Toast.makeText(this, latitude + " " + longitude, Toast.LENGTH_SHORT).show();
+//            Log.d("\n\n\n\n\nNOTOROUS", latitude + " " + longitude);
+
+            DangerReportFragment fragment = new DangerReportFragment();
+            fragment.context = getApplicationContext();
+            fragment.latLngArrayList = latLngArrayList;
+            fragment.show(getFragmentManager(), "");
+
         }
 
         return false;
