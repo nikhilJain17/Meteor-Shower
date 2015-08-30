@@ -26,6 +26,9 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +41,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import static nikhil.spaceapps.R.*;
 
@@ -46,6 +50,8 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
 
     ArrayList<LatLng> latLngArrayList;
+
+    TileOverlay mOverlay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +67,13 @@ public class MapsActivity extends FragmentActivity {
 
 
 
+
 //        mMap.addMarker(new MarkerOptions().position(new LatLng(0,0)));
 
     }
+
+
+
 
     @Override
     protected void onResume() {
@@ -328,8 +338,30 @@ public class MapsActivity extends FragmentActivity {
         protected void onPostExecute(Void yolo) {
             plotOnMap();
 //            Toast.makeText(getApplicationContext(), latLngArrayList.size(), Toast.LENGTH_SHORT).show();
-
+            addHeatMap();
         }
+
+        private void addHeatMap() {
+//        List<LatLng> list = null;
+//
+//        // Get the data: latitude/longitude positions of police stations.
+//        try {
+//            list = readItems(R.raw.police_stations);
+//        } catch (JSONException e) {
+//            Toast.makeText(this, "Problem reading list of locations.", Toast.LENGTH_LONG).show();
+//        }
+
+            // Create a heat map tile provider, passing it the latlngs of the police stations.
+            HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
+                    .data(latLngArrayList)
+                    .build();
+
+            // Add a tile overlay to the map, using the heat map tile provider.
+            mOverlay = mMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+
+
+        } // addheatmap end
+
 
         /*
         Plot the latlngs on the map
